@@ -36,10 +36,14 @@ function chpwd_update_git_vars() {
 }
 
 function update_current_git_vars() {
+    if [[ ! -e $__GIT_PROMPT_DIR/gitstatus ]]; then
+        echo Error: you must run \"go build gitstatus.go\" within $__GIT_PROMPT_DIR
+        return
+    fi
+
     unset __CURRENT_GIT_STATUS
 
-    local gitstatus="$__GIT_PROMPT_DIR/gitstatus.py"
-    _GIT_STATUS=`python ${gitstatus}`
+    _GIT_STATUS=`$__GIT_PROMPT_DIR/gitstatus`
     __CURRENT_GIT_STATUS=("${(@f)_GIT_STATUS}")
 	GIT_BRANCH=$__CURRENT_GIT_STATUS[1]
 	GIT_REMOTE=$__CURRENT_GIT_STATUS[2]
