@@ -12,6 +12,15 @@ func main() {
 	// change those symbols to whatever you prefer
 	symbols := map[string]string{"ahead of": "↑", "behind": "↓", "prehash": ":"}
 
+	stash := ""
+	res, err := exec.Command("git", "stash", "list").Output()
+	if err != nil {
+		os.Exit(0)
+	}
+	if len(res) > 0 {
+		stash = "1"
+	}
+
 	gitsym, err := exec.Command("git", "symbolic-ref", "HEAD").CombinedOutput()
 	if strings.Contains(string(gitsym), "fatal: Not a git repository") {
 		os.Exit(0)
@@ -28,7 +37,7 @@ func main() {
 		branch = strings.TrimSpace(string(gitsym))[11:]
 	}
 
-	res, err := exec.Command("git", "diff", "--name-status").Output()
+	res, err = exec.Command("git", "diff", "--name-status").Output()
 	if err != nil {
 		os.Exit(0)
 	}
@@ -133,6 +142,7 @@ func main() {
 	}
 
 	out := strings.Join([]string{
+		stash,
 		branch,
 		remote,
 		staged,
